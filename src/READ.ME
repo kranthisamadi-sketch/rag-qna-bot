@@ -1,0 +1,104 @@
+# RAG Document Q&A Bot
+
+A command-line Retrieval-Augmented Generation (RAG) system that answers natural language questions using only information from a local collection of documents (PDF, TXT, DOCX), with clear source citations for every answer.
+
+## Tech Stack
+
+| Component | Library | Version |
+|---|---|---|
+| PDF parsing | PyMuPDF (fitz) | 1.24.x |
+| DOCX parsing | python-docx | 1.1.x |
+| Text chunking | langchain-text-splitters | 0.2.x |
+| Embedding model | sentence-transformers (all-MiniLM-L6-v2) | 3.0.x |
+| Vector database | ChromaDB | 0.5.x |
+| LLM (answer generation) | Ollama (llama3.2, local) | 0.6.2 (Python client) |
+| CLI interface | rich | 13.x |
+| Environment config | python-dotenv | 1.0.x |
+| Language | Python | 3.11+ |
+
+
+## Architecture Overview
+The indexing step (`index.py`) and the querying step (`main.py`) are fully separated — you only re-run indexing when documents change.
+
+## Chunking Strategy
+
+I used **`RecursiveCharacterTextSplitter`** with a chunk size of **500 characters** and **100 character overlap**.
+
+**Why:** This splitter tries paragraph breaks first, then sentence breaks, then word breaks — so chunks stay semantically coherent instead of cutting mid-sentence like a naive fixed-size splitter would. The 100-character overlap (20% of chunk size) ensures that information spanning a chunk boundary isn't lost during retrieval, which is especially important for technical documents like research papers where a definition and its explanation might otherwise be split apart.
+
+## Embedding Model & Vector Database
+
+**Embedding model: `all-MiniLM-L6-v2`** (via sentence-transformers)
+- Runs entirely locally, no API key or cost
+- Fast (suitable for batch embedding hundreds of chunks in seconds)
+- Strong performance on semantic similarity tasks relative to its small size (~80MB)
+
+**Vector database: ChromaDB**
+- Simple Python-native API, easy to persist to disk (`PersistentClient`)
+- No external server required (unlike Qdrant/Weaviate)
+- Clear separation between writing (`index_chunks`) and reading (`retrieve`)
+
+## LLM Choice
+
+**Ollama running `llama3.2` locally** — chosen instead of a paid API because it requires no billing setup, runs entirely offline, and is explicitly permitted by the assignment ("any open-source model via Ollama"). The system prompt strictly instructs the model to answer only from retrieved context and to explicitly say when an answer isn't found in the documents — this was verified by testing an out-of-scope question (see Known Limitations).
+
+## Setup Instructions
+
+### 1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd rag-qna-bot
+```
+
+### 2. Create a virtual environment
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac/Linux
+```
+
+### 3. Install dependencies
+```bash
+pip install pymupdf langchain langchain-text-splitters sentence-transformers chromadb ollama python-docx rich python-dotenv
+```
+
+### 4. Install and start Ollama
+- Download from [ollama.com/download](https://ollama.com/download)
+- Pull the model:
+```bash
+ollama pull llama3.2
+```
+
+### 5. Add your documents
+Place 4–5 PDF/TXT/DOCX files into the `./data` folder.
+
+### 6. Build the index (run once, or whenever documents change)
+```bash
+python index.py
+```
+
+### 7. Run the Q&A bot
+```bash
+python main.py
+```
+
+## Environment Variables
+
+None required — Ollama runs locally with no API key. (A `.env` file is present in the repo structure for future extensibility if swapping to a cloud LLM, but no keys are committed.)
+
+## Example Queries
+
+1. **"What is the attention mechanism in transformers?"** → Explains multi-head attention from the attention paper, citing `attention_paper.pdf`.
+2. **"What is the difference between supervised and unsupervised learning?"** → Pulls definitions from `machine_learning_guide.txt`.
+3. **"How does retrieval augmented generation work?"** → Summarizes the RAG architecture from `rag_paper.pdf`.
+4. **"What are the ethical concerns around artificial intelligence?"** → Draws from `ai_overview.txt`.
+5. **"What are the key findings of the IPCC climate report?"** → Cites multiple pages from `climate_report.pdf`.
+6. **"What is the population of India in 2024?"** (out-of-scope test) → Correctly responds: *"I could not find this information in the documents."*
+
+## Known Limitations
+
+- **Local LLM quality**: `llama3.2` (3B parameters) is less capable than GPT-4 or Claude at complex multi-document reasoning; answers are sometimes shorter or less nuanced.
+- **Page-level metadata only**: citations reference page numbers, not exact paragraph/section headers within a page.
+- **No re-ranking**: retrieval uses pure vector similarity (top-k=5) with no secondary re-ranking step, so occasionally a marginally relevant chunk is retrieved alongside the truly relevant ones.
+- **Single-turn queries**: the bot does not maintain conversational memory across questions; each question is treated independently.
+- **No OCR**: scanned/image-based PDFs without embedded text will not extract any content.

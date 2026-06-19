@@ -1,0 +1,21 @@
+Artificial Intelligence Overview
+
+Artificial intelligence (AI) is the simulation of human intelligence processes by machines, especially computer systems. AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.
+
+Machine Learning
+Machine learning is a subset of AI that gives systems the ability to automatically learn and improve from experience without being explicitly programmed. It focuses on developing computer programs that can access data and use it to learn for themselves.
+
+Deep Learning
+Deep learning is part of a broader family of machine learning methods based on artificial neural networks with representation learning. Learning can be supervised, semi-supervised or unsupervised.
+
+Natural Language Processing
+Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence concerned with the interactions between computers and human language, in particular how to program computers to process and analyze large amounts of natural language data.
+
+Large Language Models
+A large language model (LLM) is a type of language model notable for its ability to achieve general-purpose language generation and understanding. LLMs acquire these abilities by learning statistical relationships from vast amounts of text during a self-supervised and semi-supervised training process.
+
+Applications of AI
+AI is used in many fields including healthcare for disease diagnosis, finance for fraud detection, transportation for autonomous vehicles, education for personalized learning, and entertainment for recommendation systems.
+
+Ethical Considerations
+The development of AI raises important ethical questions about privacy, bias, job displacement, and the long-term impact on society. Researchers and policymakers are actively working to ensure AI is developed responsibly and benefits humanity as a whole.

@@ -1,0 +1,22 @@
+Machine Learning Guide
+
+Introduction to Machine Learning
+Machine learning enables computers to learn from data without being explicitly programmed. It is divided into three main types: supervised learning, unsupervised learning, and reinforcement learning.
+
+Supervised Learning
+In supervised learning, the algorithm is trained on labeled data. The model learns to map input features to output labels. Common algorithms include linear regression, logistic regression, decision trees, random forests, and support vector machines.
+
+Unsupervised Learning
+Unsupervised learning finds hidden patterns in data without labeled responses. Clustering algorithms like K-means group similar data points together. Dimensionality reduction techniques like PCA reduce the number of features while preserving important information.
+
+Reinforcement Learning
+Reinforcement learning trains agents to make decisions by rewarding desired behaviors and punishing undesired ones. It is used in game playing, robotics, and autonomous systems.
+
+Neural Networks
+Neural networks are computing systems inspired by biological neural networks in animal brains. They consist of layers of interconnected nodes or neurons that process information using connectionist approaches.
+
+Model Evaluation
+Models are evaluated using metrics like accuracy, precision, recall, F1 score, and area under the ROC curve. Cross-validation helps ensure models generalize well to unseen data.
+
+Overfitting and Underfitting
+Overfitting occurs when a model learns noise in training data and performs poorly on new data. Underfitting occurs when a model is too simple to capture underlying patterns. Regularization techniques like L1 and L2 help prevent overfitting.
